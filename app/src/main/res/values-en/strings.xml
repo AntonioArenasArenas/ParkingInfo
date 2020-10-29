@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="parking_total">Parking places</string>
+    <string name="parking_free">Free spaces</string>
+    <string name="map_description">"Button to access the parking location and calculate the route "</string>
+    <string name="parking_icon_description">Parking icon</string>
+    <string name="settings">Settings</string>
+    <string name="link">Download link:</string>
+    <string name="new_link">New link:</string>
+    <string name="link_hint">Link</string>
+    <string name="save_description">Save</string>
+    <string name="no_link">No link</string>
+    <string name="update_error">" Error. No internet connection or server unavailable"</string>
+    <string name="loading">Loading</string>
+    <string name="refresh_description">Button to update the list</string>
+    <string name="refresh_message">Updated</string>
+    <string name="price">Price</string>
+    <string name="schedule">Schedule</string>
+    <string name="schedule_value">%1$s - %2$s</string>
+    <string name="more">Show more info</string>
+    <string name="day">day</string>
+    <string name="hour">hour</string>
+</resources>

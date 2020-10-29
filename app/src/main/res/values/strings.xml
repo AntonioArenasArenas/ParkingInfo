@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name" translatable="false">ParkingInfo</string>
+    <string name="parking_total">Plazas totales</string>
+    <string name="parking_free">Plazas libres</string>
+    <string name="map_description">Botón para acceder a la localización del parking y calcular la ruta</string>
+    <string name="parking_icon_description">Icono de parking</string>
+    <string name="settings">Configuración</string>
+    <string name="title_activity_settings" translatable="false">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+
+    <!-- Messages Preferences -->
+
+    <!-- Sync Preferences -->
+    <string name="link">Enlace de descarga:</string>
+    <string name="new_link">Nuevo enlace:</string>
+    <string name="link_hint">Enlace</string>
+    <string name="save_description">Guardar</string>
+    <string name="no_link">No hay enlace</string>
+    <string name="update_error">Error. Sin conexión a Internet o servidor no disponible</string>
+    <string name="loading">Consultando datos</string>
+    <string name="refresh_description">Botón para actualizar la lista</string>
+    <string name="refresh_message">Actualizado</string>
+    <string name="price">Precio</string>
+    <string name="schedule">Horario</string>
+    <string name="schedule_value">%1$s - %2$s</string>
+    <string name="more">Desplegar más información</string>
+    <string name="day">día</string>
+    <string name="hour">hora</string>
+
+</resources>
