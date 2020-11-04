@@ -27,5 +27,9 @@
     <string name="more">Desplegar más información</string>
     <string name="day">día</string>
     <string name="hour">hora</string>
+    <string name="coin" translatable="false">€</string>
+    <string name="no_value" translatable="false">-</string>
+    <string name="distance">Distancia</string>
+    <string name="kilometres" translatable="false">km</string>
 
 </resources>
