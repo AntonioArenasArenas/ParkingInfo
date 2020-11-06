@@ -24,8 +24,8 @@
         android:layout_marginTop="24dp"
         android:text="@string/parking_free"
         android:textSize="28sp"
-        app:layout_constraintStart_toStartOf="@+id/parkingName"
-        app:layout_constraintTop_toBottomOf="@+id/parkingName" />
+        app:layout_constraintStart_toStartOf="@id/parkingName"
+        app:layout_constraintTop_toBottomOf="@id/parkingName" />
 
     <TextView
         android:id="@+id/parkingPlaces"
@@ -33,8 +33,8 @@
         android:layout_height="wrap_content"
         android:text="@string/parking_total"
         android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="@+id/parkingFree"
-        app:layout_constraintStart_toStartOf="@+id/guideline" />
+        app:layout_constraintBottom_toBottomOf="@id/parkingFree"
+        app:layout_constraintStart_toStartOf="@id/guideline" />
 
     <TextView
         android:id="@+id/parkingPlacesCount"
@@ -43,8 +43,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="@+id/parkingPlaces"
-        app:layout_constraintStart_toEndOf="@+id/parkingPlaces" />
+        app:layout_constraintBottom_toBottomOf="@id/parkingPlaces"
+        app:layout_constraintStart_toEndOf="@id/parkingPlaces" />
 
     <TextView
         android:id="@+id/parkingFreeCount"
@@ -53,8 +53,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="@+id/parkingFree"
-        app:layout_constraintStart_toEndOf="@+id/parkingFree" />
+        app:layout_constraintBottom_toBottomOf="@id/parkingFree"
+        app:layout_constraintStart_toEndOf="@id/parkingFree" />
 
     <ImageButton
         android:id="@+id/mapView"
@@ -82,8 +82,8 @@
         android:layout_marginTop="24dp"
         android:text="@string/price"
         android:textSize="28sp"
-        app:layout_constraintStart_toStartOf="@+id/parkingFree"
-        app:layout_constraintTop_toBottomOf="@+id/parkingFree" />
+        app:layout_constraintStart_toStartOf="@id/parkingFree"
+        app:layout_constraintTop_toBottomOf="@id/parkingFree" />
 
     <TextView
         android:id="@+id/price_value"
@@ -91,8 +91,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:textSize="28sp"
-        app:layout_constraintStart_toStartOf="@+id/parkingFreeCount"
-        app:layout_constraintTop_toBottomOf="@+id/parkingFreeCount" />
+        app:layout_constraintStart_toStartOf="@id/parkingFreeCount"
+        app:layout_constraintTop_toBottomOf="@id/parkingFreeCount" />
 
     <TextView
         android:id="@+id/schedule"
@@ -100,8 +100,8 @@
         android:layout_height="wrap_content"
         android:text="@string/schedule"
         android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="@+id/price"
-        app:layout_constraintStart_toStartOf="@+id/guideline" />
+        app:layout_constraintBottom_toBottomOf="@id/price"
+        app:layout_constraintStart_toStartOf="@id/guideline" />
 
     <TextView
         android:id="@+id/schedule_value"
@@ -110,8 +110,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="@+id/schedule"
-        app:layout_constraintStart_toEndOf="@+id/schedule" />
+        app:layout_constraintBottom_toBottomOf="@id/schedule"
+        app:layout_constraintStart_toEndOf="@id/schedule" />
 
     <ImageView
         android:id="@+id/morelessarrow"
@@ -120,8 +120,8 @@
         android:layout_marginTop="10dp"
         android:contentDescription="@string/more"
         android:src="@drawable/ic_more"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/schedule" />
+        app:layout_constraintEnd_toStartOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@id/schedule" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"

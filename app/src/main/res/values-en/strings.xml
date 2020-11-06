@@ -21,4 +21,6 @@
     <string name="day">day</string>
     <string name="hour">hour</string>
     <string name="distance">Distance</string>
+    <string name="open">Open</string>
+    <string name="filter">Filter</string>
 </resources>

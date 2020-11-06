@@ -31,5 +31,7 @@
     <string name="no_value" translatable="false">-</string>
     <string name="distance">Distancia</string>
     <string name="kilometres" translatable="false">km</string>
+    <string name="open">Abierto</string>
+    <string name="filter">Filtrar</string>
 
 </resources>

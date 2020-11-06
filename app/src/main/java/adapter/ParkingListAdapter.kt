@@ -7,13 +7,15 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import kotlinx.android.synthetic.main.parking.view.*
 import model.Parking
 
 class ParkingListAdapter(private val myDataset: ArrayList<Parking>, private val context: Context) :
-    RecyclerView.Adapter<ParkingListAdapter.MyViewHolder>() {
+    RecyclerView.Adapter<ParkingListAdapter.MyViewHolder>(), Filterable {
 
     // Conectar cada item de la lista con su vista correspondiente
     class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view)
@@ -101,4 +103,9 @@ class ParkingListAdapter(private val myDataset: ArrayList<Parking>, private val 
 
 
     override fun getItemCount() = myDataset.size
+
+    override fun getFilter(): Filter {
+        TODO("Not yet implemented")
+    }
+     
 }

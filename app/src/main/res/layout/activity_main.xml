@@ -74,100 +74,127 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        android:background="#4D0808AD">
+        android:background="#4D0808AD"
+        android:fitsSystemWindows="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/price_filter"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_marginStart="25dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="100dp"
-                android:text="@string/price"
-                android:textColor="#fff"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:paddingBottom="10dp">
 
-            <EditText
-                android:id="@+id/price_filter_value"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:hint="@string/no_value"
-                android:inputType="numberDecimal"
-                app:layout_constraintStart_toStartOf="@+id/price_filter"
-                app:layout_constraintTop_toBottomOf="@+id/price_filter"
-                android:autofillHints="@string/price"
-                android:textColorHint="@color/colorPrimary"
-                android:textColor="@color/colorPrimary"
-                android:background="@drawable/bottom_border"/>
+                <TextView
+                    android:id="@+id/price_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="100dp"
+                    android:text="@string/price"
+                    android:textColor="#fff"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/coin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                app:layout_constraintTop_toBottomOf="@+id/price_filter"
-                app:layout_constraintStart_toEndOf="@+id/price_filter_value"
-                android:text="@string/coin"
-                android:textColor="@color/colorPrimary" />
+                <EditText
+                    android:id="@+id/price_filter_value"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:autofillHints="@string/price"
+                    android:background="@drawable/bottom_border"
+                    android:hint="@string/no_value"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="@color/colorPrimary"
+                    app:layout_constraintStart_toStartOf="@id/price_filter"
+                    app:layout_constraintTop_toBottomOf="@id/price_filter" />
 
-            <TextView
-                android:id="@+id/distance_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_marginTop="25dp"
-                android:text="@string/distance"
-                android:textColor="#fff"
-                app:layout_constraintStart_toStartOf="@+id/price_filter_value"
-                app:layout_constraintTop_toBottomOf="@+id/price_filter_value" />
+                <TextView
+                    android:id="@+id/coin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/coin"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintStart_toEndOf="@id/price_filter_value"
+                    app:layout_constraintTop_toBottomOf="@id/price_filter" />
 
-            <EditText
-                android:id="@+id/distance_filter_value"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                style="@style/Widget.AppCompat.EditText"
-                android:hint="@string/no_value"
-                android:inputType="numberDecimal"
-                app:layout_constraintStart_toStartOf="@+id/distance_filter"
-                app:layout_constraintTop_toBottomOf="@+id/distance_filter"
-                android:autofillHints="@string/distance"
-                android:textColorHint="@color/colorPrimary"
-                android:textColor="@color/colorPrimary"
-                android:background="@drawable/bottom_border"/>
+                <TextView
+                    android:id="@+id/distance_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:text="@string/distance"
+                    android:textColor="#fff"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="@id/price_filter_value"
+                    app:layout_constraintTop_toBottomOf="@id/price_filter_value" />
 
-            <TextView
-                android:id="@+id/km"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                app:layout_constraintTop_toBottomOf="@+id/distance_filter"
-                app:layout_constraintStart_toEndOf="@+id/distance_filter_value"
-                android:text="@string/kilometres"
-                android:textColor="@color/colorPrimary" />
+                <EditText
+                    android:id="@+id/distance_filter_value"
+                    style="@style/Widget.AppCompat.EditText"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:autofillHints="@string/distance"
+                    android:background="@drawable/bottom_border"
+                    android:hint="@string/no_value"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="@color/colorPrimary"
+                    app:layout_constraintStart_toStartOf="@id/distance_filter"
+                    app:layout_constraintTop_toBottomOf="@id/distance_filter" />
 
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/checkBox"
-                app:buttonTint="@color/colorPrimary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CheckBox"
-                android:layout_marginTop="25dp"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintStart_toStartOf="@+id/distance_filter_value"
-                app:layout_constraintTop_toBottomOf="@+id/distance_filter_value" />
+                <TextView
+                    android:id="@+id/km"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/kilometres"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintStart_toEndOf="@id/distance_filter_value"
+                    app:layout_constraintTop_toBottomOf="@id/distance_filter" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkBox_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:text="@string/open"
+                    android:textColor="@color/colorPrimary"
+                    app:buttonTint="@color/colorAccent"
+                    app:layout_constraintStart_toStartOf="@id/distance_filter_value"
+                    app:layout_constraintTop_toBottomOf="@id/distance_filter_value" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkBox_free"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:text="@string/parking_free"
+                    android:textColor="@color/colorPrimary"
+                    app:buttonTint="@color/colorAccent"
+                    app:layout_constraintStart_toStartOf="@id/checkBox_open"
+                    app:layout_constraintTop_toBottomOf="@id/checkBox_open" />
+
+                <Button
+                    android:id="@+id/submit_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:background="@color/colorAccent"
+                    android:text="@string/filter"
+                    android:textColor="@drawable/button_text_color"
+                    app:layout_constraintStart_toStartOf="@id/checkBox_free"
+                    app:layout_constraintTop_toBottomOf="@id/checkBox_free" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
     </com.google.android.material.navigation.NavigationView>
 

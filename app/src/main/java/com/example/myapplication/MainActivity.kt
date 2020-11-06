@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         network.actualizar(url,lista,this,viewAdapter)
 
 
+
         recyclerView = findViewById<RecyclerView>(R.id.listaParking).apply {
             // si el tamaño va a ser fijo y solo depende del numero de elementos poner a true para mejorar rendimiento
             setHasFixedSize(true)
