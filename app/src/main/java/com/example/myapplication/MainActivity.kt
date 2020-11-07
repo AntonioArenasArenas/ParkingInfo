@@ -1,14 +1,19 @@
 package com.example.myapplication
 
 import adapter.ParkingListAdapter
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,9 +22,9 @@ import network.UpdateParking
 
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity()  {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewAdapter: ParkingListAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var network: UpdateParking
 
@@ -28,6 +33,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.my_toolbar))
+
+
+        //Comprobamos que tenemos el permiso de localizacion para los filtros de distancia de los parking
+
+        if(ContextCompat.checkSelfPermission(this , Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_DENIED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+                //TODO pedir el permiso con el Dialog y no el toast de ejemplo de ahora
+                val toast5 = Toast.makeText(
+                    applicationContext,
+                    getString(R.string.app_name), Toast.LENGTH_LONG
+                )
+
+                toast5.show()
+            }else{
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),0)
+            }
+        }
 
         //Obtenemos las preferencias donde esta almacenado el enlace del que obtener la lista de parkings
 
@@ -43,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         network.actualizar(url,lista,this,viewAdapter)
 
 
-
+        //Se gestiona la lista con el adaptador
         recyclerView = findViewById<RecyclerView>(R.id.listaParking).apply {
             // si el tamaño va a ser fijo y solo depende del numero de elementos poner a true para mejorar rendimiento
             setHasFixedSize(true)
@@ -70,6 +92,12 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        val filter: Button= findViewById(R.id.submit_button)
+        filter.setOnClickListener{
+            viewAdapter.filter.filter("elpepe")
+
+        }
+
 
     }
 
@@ -83,5 +111,15 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         return true
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        //TODO gestionar la respuesta de los permisos
+    }
+
+
 
 }

@@ -33,5 +33,7 @@
     <string name="kilometres" translatable="false">km</string>
     <string name="open">Abierto</string>
     <string name="filter">Filtrar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

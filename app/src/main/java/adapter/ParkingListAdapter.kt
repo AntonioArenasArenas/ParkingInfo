@@ -3,19 +3,27 @@ package adapter
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.location.LocationManager
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import kotlinx.android.synthetic.main.parking.view.*
 import model.Parking
+import java.util.jar.Manifest
 
-class ParkingListAdapter(private val myDataset: ArrayList<Parking>, private val context: Context) :
+class ParkingListAdapter(private var myDataset: ArrayList<Parking>, private val context: Context) :
     RecyclerView.Adapter<ParkingListAdapter.MyViewHolder>(), Filterable {
+
+    private var filterList: List<Parking> = myDataset
+
+    private var originalList: List<Parking> =myDataset
 
     // Conectar cada item de la lista con su vista correspondiente
     class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view)
@@ -37,11 +45,11 @@ class ParkingListAdapter(private val myDataset: ArrayList<Parking>, private val 
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
-        val parking =myDataset[position]
+        val parking =filterList[position]
         holder.view.parkingName.text=parking.name
         //Se comprueba si esta o no expandido el parking
         val isExpanded=parking.expanded
-        ocultarCamposExpandidos(isExpanded,holder)
+        ocultarCamposExpandidos(isExpanded, holder)
         //Ocultar campos si hay fallo de conexion
         if(parking.name.contains("Error")){
             ocultarCamposError(holder)
@@ -49,7 +57,11 @@ class ParkingListAdapter(private val myDataset: ArrayList<Parking>, private val 
             holder.view.parkingFreeCount.text=parking.libres
             holder.view.parkingPlacesCount.text=parking.total
             holder.view.price_value.text=parking.precio
-            holder.view.schedule_value.text=context.getString(R.string.schedule_value,parking.hora_inicio,parking.hora_fin)
+            holder.view.schedule_value.text=context.getString(
+                R.string.schedule_value,
+                parking.hora_inicio,
+                parking.hora_fin
+            )
             holder.view.mapView.setOnClickListener {
                 val gmmIntentUri =
                     Uri.parse("google.navigation:q=" + parking.posicion)
@@ -98,14 +110,79 @@ class ParkingListAdapter(private val myDataset: ArrayList<Parking>, private val 
             holder.view.price_value.visibility=View.GONE
             holder.view.schedule.visibility=View.GONE
             holder.view.schedule_value.visibility=View.GONE
+
         }
     }
 
 
-    override fun getItemCount() = myDataset.size
+    override fun getItemCount() = filterList.size
 
     override fun getFilter(): Filter {
-        TODO("Not yet implemented")
+        TODO("hacer el filtro como viene abajo una vez gestionado lo de los permisos")
     }
+/*
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+
+            override fun publishResults(charSequence: CharSequence?, filterResults: Filter.FilterResults) {
+                filterList = filterResults.values as List<Parking>
+                notifyDataSetChanged()
+            }
+
+            override fun performFiltering(charSequence: CharSequence?): FilterResults {
+                val queryString = charSequence?.toString()
+
+                val filterResults = FilterResults()
+
+                val filters:List<String>? = queryString?.split(",")
+
+                val nList = ArrayList<Parking>()
+
+                //Los filtros están puestos en este orden precio,distancia,libre y abierto
+
+                for(parking in originalList){
+                    //Precio
+                    if(!filters?.get(0).equals("-")) {
+                        val precio = filters?.get(0)
+                        if (parking.precio!! < precio.toString()) {
+                            nList.add(parking)
+                        }
+                    }
+                    //Distancia
+                    if(!filters?.get(1).equals("-")) {
+                        val max = filters?.get(1)
+                        var locManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                        ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+                        var loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+
+                    }
+
+                    }
+                    //Abierto
+                    if(!filters?.get(0).equals("-")) {
+                        val precio = filters?.get(0)
+                        if (parking.precio!! < precio.toString()) {
+                            nList.add(parking)
+                        }
+                    }
+                    //Libre
+                    if(!filters?.get(0).equals("-")) {
+                        val precio = filters?.get(0)
+                        if (parking.precio!! < precio.toString()) {
+                            nList.add(parking)
+                        }
+                    }
+
+
+
+
+                return filterResults
+            }
+        }
+    }
+*/
+
      
 }
