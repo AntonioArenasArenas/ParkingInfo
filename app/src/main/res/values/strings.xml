@@ -34,6 +34,9 @@
     <string name="open">Abierto</string>
     <string name="filter">Filtrar</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="permission_info">Para poder usar la aplicación con toda su funcionalidad, se necesita el permiso de localización, de no ser así, alguno de los filtros no estará disponible</string>
+    <string name="grant_permission">Dar permiso</string>
+    <string name="cancel">Cancelar</string>
+    <string name="disable_filter">El filtro de distancia está deshabilitado</string>
 
 </resources>

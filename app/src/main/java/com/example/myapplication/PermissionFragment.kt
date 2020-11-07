@@ -1,38 +1,44 @@
 package com.example.myapplication
 
+import android.Manifest
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [PermissionFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class PermissionFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            // Use the Builder class for convenient dialog construction
+            // Se usa el builder para la construccion del Dialog
             val builder = AlertDialog.Builder(it)
-            builder.setMessage(R.string.app_name)
-                .setPositiveButton(R.string.app_name,
-                    DialogInterface.OnClickListener { dialog, id ->
-                        // FIRE ZE MISSILES!
-                    })
-                .setNegativeButton(R.string.app_name,
-                    DialogInterface.OnClickListener { dialog, id ->
-                        // User cancelled the dialog
-                    })
-            // Create the AlertDialog object and return it
+            builder.setMessage(R.string.permission_info)
+                .setPositiveButton(R.string.grant_permission
+                ) { _, _ ->
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        0
+                    )
+                }
+
+                .setNegativeButton(R.string.cancel
+                ) { _, _ ->
+                    dismiss()
+                    requireActivity().onRequestPermissionsResult(1, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        intArrayOf())
+                }
+            // Se crea el Dialog y se devuelve
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        requireActivity().onRequestPermissionsResult(1, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            intArrayOf())
     }
 }

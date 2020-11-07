@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import adapter.ParkingListAdapter
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,17 +8,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import model.Parking
 import network.UpdateParking
-
+import permissions.PermissionsClass
 
 
 class MainActivity : AppCompatActivity()  {
@@ -37,19 +36,8 @@ class MainActivity : AppCompatActivity()  {
 
         //Comprobamos que tenemos el permiso de localizacion para los filtros de distancia de los parking
 
-        if(ContextCompat.checkSelfPermission(this , Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_DENIED){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
-                //TODO pedir el permiso con el Dialog y no el toast de ejemplo de ahora
-                val toast5 = Toast.makeText(
-                    applicationContext,
-                    getString(R.string.app_name), Toast.LENGTH_LONG
-                )
-
-                toast5.show()
-            }else{
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),0)
-            }
-        }
+        val permissions= PermissionsClass()
+        permissions.askPermission(this,this,supportFragmentManager)
 
         //Obtenemos las preferencias donde esta almacenado el enlace del que obtener la lista de parkings
 
@@ -112,12 +100,39 @@ class MainActivity : AppCompatActivity()  {
         return true
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        //TODO gestionar la respuesta de los permisos
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        val distance: EditText =findViewById(R.id.distance_filter_value)
+        //Se usa un when por si la aplicación escalara y hubiera más permisos que controlar
+        when (requestCode) {
+            0 -> {
+                // Si se cancela la petición el resultado estará vacío
+                if ((grantResults.isNotEmpty() &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    //Permiso concedido, filtro de distancia activado
+
+                    distance.isEnabled=true
+                    distance.setBackgroundResource(R.drawable.bottom_border)
+
+                } else {
+                        //Se explica que se han hecho modificaciones en la aplicación por no tener el permiso y se desactiva el filtro
+                        Snackbar.make(
+                            findViewById(R.id.drawer_layout), R.string.disable_filter,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        distance.isEnabled = false
+                        distance.setBackgroundResource(R.drawable.bottom_border_red)
+
+                }
+                return
+            }
+            //Este codigo se usa para saber que venimos del Dialog
+            1 ->{
+                distance.isEnabled = false
+                distance.setBackgroundResource(R.drawable.bottom_border_red)
+                return
+            }
+        }
     }
 
 
