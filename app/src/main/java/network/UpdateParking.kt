@@ -9,8 +9,15 @@ import com.example.myapplication.R
 import model.Parking
 import parser.ParkingXmlParser
 
+/**Clase que gestiona la comunicación web para obtener los parking*/
 class UpdateParking {
 
+    /**Método que actualiza el estado actual de los parking. En él se conecta con el enlace adecuado y se parsea el XML correspondiente
+     *
+     * @param url URL a donde se hace la petición GET
+     * @param lista ArrayList dónde se devuelven los Parking obtenidos
+     * @param context Context de la actividad dónde se muestran los parking
+     * @param viewAdapter RecyclerView.Adapter<*> adaptador que se encarga al final de la comunicación de hacer un notifyDataSetChanged()*/
     fun actualizar(url: String?, lista: ArrayList<Parking>, context: Context, viewAdapter: RecyclerView.Adapter<*>) {
         val queue = Volley.newRequestQueue(context)
 

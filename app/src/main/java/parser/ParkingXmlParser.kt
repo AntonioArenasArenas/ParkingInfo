@@ -11,8 +11,12 @@ import java.io.InputStream
 
 private val ns: String? = null
 
+/**Parser de la información de los XML
+ *
+ * @param context Context de la actividad usado para obtener los recursos String*/
 class ParkingXmlParser(private val context: Context) {
 
+    /**Método que crea una instancia del analizador */
     @Throws(XmlPullParserException::class, IOException::class)
     fun parse(inputStream: InputStream): List<Parking> {
         inputStream.use { inputStreamUse->
@@ -24,6 +28,7 @@ class ParkingXmlParser(private val context: Context) {
         }
     }
 
+    /**Método que lee la feed XML*/
     @Throws(XmlPullParserException::class, IOException::class)
     private fun readFeed(parser: XmlPullParser): List<Parking> {
         val parkings = mutableListOf<Parking>()
@@ -43,6 +48,7 @@ class ParkingXmlParser(private val context: Context) {
         return parkings
     }
 
+    /**Método que parsea cada Parking*/
     @Throws(XmlPullParserException::class, IOException::class)
     private fun readParking(parser: XmlPullParser): Parking {
         parser.require(XmlPullParser.START_TAG, ns, "aparcamiento")
@@ -88,6 +94,7 @@ class ParkingXmlParser(private val context: Context) {
     }
 
 
+    /**Este método omite las etiquetas que no interesan*/
     @Throws(XmlPullParserException::class, IOException::class)
     private fun skip(parser: XmlPullParser) {
         if (parser.eventType != XmlPullParser.START_TAG) {

@@ -1,21 +1,21 @@
 package com.example.myapplication
 
 import adapter.ParkingListAdapter
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import location.LocationServiceUpdate
 import model.Parking
 import network.UpdateParking
 import permissions.PermissionsClass
@@ -35,20 +35,26 @@ class MainActivity : AppCompatActivity()  {
 
 
         //Comprobamos que tenemos el permiso de localizacion para los filtros de distancia de los parking
-
         val permissions= PermissionsClass()
         permissions.askPermission(this,this,supportFragmentManager)
 
-        //Obtenemos las preferencias donde esta almacenado el enlace del que obtener la lista de parkings
-
-        val sharedPref = this.getSharedPreferences("Enlace", Context.MODE_PRIVATE)
-        var url: String? = sharedPref.getString("Enlace", getString(R.string.no_link))
 
         val lista =  ArrayList<Parking>()
         // Se añade un item falso de consultar datos como espera
         lista.add(Parking("0", getString(R.string.loading), "-", "-", "-", "-", "-", "-",false))
-        viewManager = LinearLayoutManager(this)
         viewAdapter = ParkingListAdapter(lista, applicationContext)
+
+
+        //Actualizamos la posición
+        val location = LocationServiceUpdate(this,viewAdapter,this)
+        location.updateLocation()
+
+
+        //Obtenemos las preferencias donde esta almacenado el enlace del que obtener la lista de parkings
+        val sharedPref = this.getSharedPreferences("Enlace", Context.MODE_PRIVATE)
+        var url: String? = sharedPref.getString("Enlace", getString(R.string.no_link))
+
+        viewManager = LinearLayoutManager(this)
         network= UpdateParking()
         network.actualizar(url,lista,this,viewAdapter)
 
@@ -80,11 +86,12 @@ class MainActivity : AppCompatActivity()  {
 
         }
 
+        //Botón para filtrar
         val filter: Button= findViewById(R.id.submit_button)
         filter.setOnClickListener{
-            viewAdapter.filter.filter("elpepe")
-
+            filtrar()
         }
+
 
 
     }
@@ -136,5 +143,34 @@ class MainActivity : AppCompatActivity()  {
     }
 
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        filtrar()
+    }
+
+    /** Método que coge los datos de los filtros y los pasa al filter del adaptador */
+    private fun filtrar(){
+        val precio: EditText= findViewById(R.id.price_filter_value)
+        var precioFilter=precio.text.toString()
+        if(precioFilter.isEmpty()){
+            precioFilter="-"
+        }
+        val distancia: EditText= findViewById(R.id.distance_filter_value)
+        var distanciaFilter=distancia.text.toString()
+        if(distanciaFilter.isEmpty()){
+            distanciaFilter="-"
+        }
+        val checkOpen: CheckBox = findViewById(R.id.checkBox_open)
+        val checkFree: CheckBox = findViewById(R.id.checkBox_free)
+        viewAdapter.filter.filter(precioFilter + ","+ distanciaFilter+","+checkOpen.isChecked+","+checkFree.isChecked)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode==Activity.RESULT_OK && requestCode==2){
+            val location = LocationServiceUpdate(this,viewAdapter,this)
+            location.updateLocation()
+        }
+    }
 
 }

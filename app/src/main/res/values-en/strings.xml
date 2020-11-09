@@ -27,4 +27,5 @@
     <string name="grant_permission">Grant permission</string>
     <string name="cancel">Cancel</string>
     <string name="disable_filter">"Distance filter is disabled "</string>
+    <string name="turn_on_location">"Could not get the position, if you want to use the distance filter, please turn on the location "</string>
 </resources>
