@@ -11,6 +11,7 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
+import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -85,7 +86,8 @@ class LocationServiceUpdate (private val context: Context, val viewAdapter: Park
 
         task.addOnFailureListener { e: Exception ->
 
-            if (e is ResolvableApiException) {
+
+            if (e is ResolvableApiException && MainActivity.globalVar) {
                 try {
                     // Show the dialog by calling startResolutionForResult(),
                     // and check the result in onActivityResult().
@@ -134,4 +136,5 @@ class LocationServiceUpdate (private val context: Context, val viewAdapter: Park
 
 
     }
+
 }

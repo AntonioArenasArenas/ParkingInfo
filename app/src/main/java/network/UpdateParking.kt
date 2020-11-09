@@ -1,7 +1,7 @@
 package network
 
+import adapter.ParkingListAdapter
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -18,7 +18,7 @@ class UpdateParking {
      * @param lista ArrayList dónde se devuelven los Parking obtenidos
      * @param context Context de la actividad dónde se muestran los parking
      * @param viewAdapter RecyclerView.Adapter<*> adaptador que se encarga al final de la comunicación de hacer un notifyDataSetChanged()*/
-    fun actualizar(url: String?, lista: ArrayList<Parking>, context: Context, viewAdapter: RecyclerView.Adapter<*>) {
+    fun actualizar(url: String?, lista: ArrayList<Parking>, context: Context, viewAdapter: ParkingListAdapter) {
         val queue = Volley.newRequestQueue(context)
 
 
@@ -29,7 +29,9 @@ class UpdateParking {
                 val responseStream = response.byteInputStream(Charsets.ISO_8859_1)
                 lista.clear()
                 lista.addAll(ParkingXmlParser(context).parse(responseStream))
+                viewAdapter.updateFilterList(lista)
                 viewAdapter.notifyDataSetChanged()
+
             },
             {
                 lista.clear()

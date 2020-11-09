@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import kotlinx.android.synthetic.main.parking.view.*
@@ -26,9 +27,9 @@ class ParkingListAdapter(
 
     private var currentLocation: Location? = null
 
-    var filterList: List<Parking> = myDataset
+    var filterList: ArrayList<Parking> = myDataset
 
-    var originalList: List<Parking> = myDataset
+    var originalList: ArrayList<Parking> = myDataset
 
     // Conectar cada item de la lista con su vista correspondiente
     class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view)
@@ -166,29 +167,35 @@ class ParkingListAdapter(
                     }
                     //Distancia
                     if (filters[1] != "-") {
-                        val max = filters[1].toDouble()
+                        //Si se apaga la ubicación antes de poder obtener una ubicación se comunica con un Toast
+                        if(currentLocation?.latitude==null){
+                            val info=Toast.makeText(context,context.getString(R.string.turn_on_location), Toast.LENGTH_LONG)
+                            info.show()
 
-                        val latitude = currentLocation?.latitude
-                        val longitude = currentLocation?.longitude
+                        }else {
+                            val max = filters[1].toDouble()
 
-                        val posicionArray = parking.posicion.split(",")
-                        val latitudeParking = posicionArray[0].toDouble()
-                        val longitudeParking = posicionArray[1].toDouble()
-                        val results = FloatArray(1)
-                        Location.distanceBetween(
-                            latitude!!,
-                            longitude!!,
-                            latitudeParking,
-                            longitudeParking,
-                            results
-                        )
-                        val distance =
-                            results[0] / 1000 //Conversion a Km ya que el método lo devuelve en metros
-                        if (distance > max) {
-                            isCorrect = false
+                            val latitude = currentLocation?.latitude
+                            val longitude = currentLocation?.longitude
+
+                            val posicionArray = parking.posicion.split(",")
+                            val latitudeParking = posicionArray[0].toDouble()
+                            val longitudeParking = posicionArray[1].toDouble()
+                            val results = FloatArray(1)
+                            Location.distanceBetween(
+                                latitude!!,
+                                longitude!!,
+                                latitudeParking,
+                                longitudeParking,
+                                results
+                            )
+                            val distance =
+                                results[0] / 1000 //Conversion a Km ya que el método lo devuelve en metros
+                            if (distance > max) {
+                                isCorrect = false
+                            }
+
                         }
-
-
                     }
 
                     //Abierto
@@ -234,6 +241,24 @@ class ParkingListAdapter(
     fun updateLocation(newLocation: Location?) {
         this.currentLocation = newLocation
 
+    }
+
+    /**Método que controla la actualización de la lista del Adapter cuando se pulsa el botón actualizar para que se actualicen los elementos en pantalla
+     *
+     * @param newList ArrayList que contiene la lista actualizada **completa** de la que sólo cogeremos aquellos parking que se estén mostrando en este momento*/
+    fun updateFilterList(newList: ArrayList<Parking>){
+        var listaUpdated = ArrayList<Parking>()
+        if (filterList.size!=newList.size && filterList.isNotEmpty()){
+            for (parking in filterList){
+                val codigoFilter= parking.codigo
+                for(originalParking in newList){
+                    if(codigoFilter==originalParking.codigo){
+                        listaUpdated.add(originalParking)
+                    }
+                }
+            }
+            filterList=listaUpdated
+        }
     }
 
 
