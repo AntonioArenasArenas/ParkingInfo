@@ -12,6 +12,4 @@ package model
  * @param hora_fin Hora de cierre del parking
  * @param expanded True si el parking está expandido en la lista en el momento actual*/
 class Parking(var codigo: String, var name: String, var total: String?, var libres: String?, var posicion: String, var precio: String?,
-              var hora_inicio: String?, var hora_fin: String?, var expanded: Boolean) {
-
-}
+              var hora_inicio: String?, var hora_fin: String?, var expanded: Boolean)

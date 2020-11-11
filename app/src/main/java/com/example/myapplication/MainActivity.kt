@@ -10,12 +10,17 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import location.LocationServiceUpdate
 import model.Parking
 import network.UpdateParking
@@ -48,7 +53,19 @@ class MainActivity : AppCompatActivity() {
 
         val lista = ArrayList<Parking>()
         // Se añade un item falso de consultar datos como espera
-        lista.add(Parking("0", getString(R.string.loading), "-", "-", "-", "-", "-", "-", false))
+        lista.add(
+            Parking(
+                "0",
+                getString(R.string.loading),
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                false
+            )
+        )
         viewAdapter = ParkingListAdapter(lista, applicationContext)
 
 
@@ -59,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
         //Obtenemos las preferencias donde esta almacenado el enlace del que obtener la lista de parkings
         sharedPref = this.getSharedPreferences("Enlace", Context.MODE_PRIVATE)
-        var url: String? = sharedPref.getString("Enlace", getString(R.string.no_link))
+        val url: String? = sharedPref.getString("Enlace", getString(R.string.no_link))
 
         viewManager = LinearLayoutManager(this)
         network = UpdateParking()
@@ -78,12 +95,15 @@ class MainActivity : AppCompatActivity() {
             adapter = viewAdapter
 
         }
-
+        val tabLayout = findViewById<View>(R.id.tabLayout) as TabLayout
         val refresh: ImageButton = findViewById(R.id.refresh)
         //Se coge de nuevo aquí el enlace en caso de que la navegación sea hacia atrás y no hacia arriba
         refresh.setOnClickListener {
-            url = sharedPref.getString("Enlace", getString(R.string.no_link))
-            network.actualizar(url, lista, this, viewAdapter)
+            if (tabLayout.selectedTabPosition == 1) {
+                showFavs(lista, 1)
+            } else {
+                showList(lista)
+            }
             val toast1 = Toast.makeText(
                 applicationContext,
                 getString(R.string.refresh_message), Toast.LENGTH_LONG
@@ -93,12 +113,47 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        val navDrawer: DrawerLayout = findViewById(R.id.drawer_layout)
+
+
         //Botón para filtrar
         val filter: Button = findViewById(R.id.submit_button)
         filter.setOnClickListener {
             filtrar()
+            navDrawer.closeDrawer(GravityCompat.START)
         }
 
+        val openFilter: ImageButton = findViewById(R.id.filter)
+        openFilter.setOnClickListener {
+            if (navDrawer.isDrawerOpen(GravityCompat.START)) {
+                navDrawer.closeDrawer(GravityCompat.START)
+            } else {
+                navDrawer.openDrawer(GravityCompat.START)
+            }
+        }
+
+        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            //Cambiar a la pestaña correspondiente
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val position = tab.position
+                //Pestaña favoritos
+                if (position == 1) {
+                    viewAdapter.setCurrentTab(1)
+                    showFavs(lista, 0)
+                } else {
+                    viewAdapter.setCurrentTab(0)
+                    showList(lista)
+                }
+                //Reiniciamos los filtros entre pestañas
+                viewAdapter.setfilterList(lista)
+                restartFilters()
+            }
+
+            //No hace falta dar comportamiento especial a los Tab
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
 
     }
 
@@ -188,6 +243,70 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    /**Método que sirve para actualizar la pantalla cuando accedemos o actualizamos a la pestaña de favoritos
+     *
+     * @param list lista de todos los parking mostrados actualmente. Devuelve los favoritos al finalizar
+     * @param mode 0 si es para mostrar los favoritos, 1 si es para actualizar la lista tras darle al botón*/
+    fun showFavs(list: ArrayList<Parking>, mode: Int) {
+        sharedPref = this.getSharedPreferences("Favoritos", Context.MODE_PRIVATE)
+        val favs = sharedPref.getString("Favoritos", "")
+        val favsSplitted = favs!!.split(",")
+        val arraySplitted: ArrayList<String>
+        arraySplitted = if (favs.isEmpty()) {
+            ArrayList()
+        } else {
+            ArrayList(favsSplitted)
+        }
+        viewAdapter.displayFavorites(arraySplitted, list)
+        //Mostrar
+        if (mode == 0) {
+            viewAdapter.notifyDataSetChanged()
+        //Actualizar
+        } else {
+            sharedPref = this.getSharedPreferences("Enlace", Context.MODE_PRIVATE)
+            val url = sharedPref.getString("Enlace", getString(R.string.no_link))
+            network.getFavoriteListUpdated(this,url,viewAdapter)
+
+        }
+    }
+
+    /**Método que sirve para mostrar la lista con todos los parking
+     *
+     * @param list lista donde se devuelven los parking*/
+    fun showList(list: ArrayList<Parking>) {
+        list.clear()
+        list.add(
+            Parking(
+                "0",
+                getString(R.string.loading),
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                false
+            )
+        )
+        viewAdapter.notifyDataSetChanged()
+        sharedPref = this.getSharedPreferences("Enlace", Context.MODE_PRIVATE)
+        val url = sharedPref.getString("Enlace", getString(R.string.no_link))
+        network.actualizar(url, list, this, viewAdapter)
+
+    }
+
+    /**Método que reiniciar los filtros.Se usa al cambiar de pestañas y resetear las listas*/
+    fun restartFilters(){
+        val precio: EditText = findViewById(R.id.price_filter_value)
+        precio.setText("")
+        val distancia: EditText = findViewById(R.id.distance_filter_value)
+        distancia.setText("")
+        val checkOpen: CheckBox = findViewById(R.id.checkBox_open)
+        checkOpen.isChecked=false
+        val checkFree: CheckBox = findViewById(R.id.checkBox_free)
+        checkFree.isChecked=false
     }
 
 }

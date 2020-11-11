@@ -46,6 +46,17 @@
                     android:orientation="horizontal">
 
                     <ImageButton
+                        android:id="@+id/filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="24dp"
+                        android:layout_marginRight="24dp"
+                        android:background="@null"
+                        android:contentDescription="@string/refresh_description"
+                        android:src="@drawable/ic_filter" />
+
+                    <ImageButton
                         android:id="@+id/refresh"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -55,16 +66,45 @@
                         android:background="@null"
                         android:contentDescription="@string/refresh_description"
                         android:src="@drawable/ic_refresh" />
+
+
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.Toolbar>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_light"
+            app:tabMode="fixed">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabListParking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/parkings"
+                android:icon="@drawable/ic_list"
+                />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabListFav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/favorites"
+                android:icon="@drawable/ic_favorite_filled"
+                />
+
+        </com.google.android.material.tabs.TabLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listaParking"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".MainActivity" />
+
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

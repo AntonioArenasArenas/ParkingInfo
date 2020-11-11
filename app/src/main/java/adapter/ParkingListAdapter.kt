@@ -3,6 +3,7 @@ package adapter
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.SharedPreferences
 import android.location.Location
 import android.net.Uri
 import android.view.LayoutInflater
@@ -27,9 +28,14 @@ class ParkingListAdapter(
 
     private var currentLocation: Location? = null
 
-    var filterList: ArrayList<Parking> = myDataset
+    private lateinit var sharedPref: SharedPreferences
 
-    var originalList: ArrayList<Parking> = myDataset
+    private var filterList: ArrayList<Parking> = myDataset
+
+    private var originalList: ArrayList<Parking> = myDataset
+
+    private var currentTab: Int = 0
+
 
     // Conectar cada item de la lista con su vista correspondiente
     class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view)
@@ -50,7 +56,7 @@ class ParkingListAdapter(
     // Setear el contenido de cada item, holder es la vista y position la posicion de la lista de item que estamos tratando
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-
+        sharedPref = context.getSharedPreferences("Favoritos", Context.MODE_PRIVATE)
         val parking = filterList[position]
         holder.view.parkingName.text = parking.name
         //Se comprueba si esta o no expandido el parking
@@ -68,16 +74,26 @@ class ParkingListAdapter(
                 parking.hora_inicio,
                 parking.hora_fin
             )
-            holder.view.mapView.setOnClickListener {
-                val gmmIntentUri =
-                    Uri.parse("google.navigation:q=" + parking.posicion)
-                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                mapIntent.setPackage("com.google.android.apps.maps")
-                mapIntent.flags = FLAG_ACTIVITY_NEW_TASK
-                context.startActivity(mapIntent)
+            val codesMutable = getFavorites()
+            if (codesMutable.contains(parking.codigo)) {
+                holder.view.favoriteButton.setImageResource(R.drawable.ic_favorite_filled)
+            } else {
+                holder.view.favoriteButton.setImageResource(R.drawable.ic_favorite)
             }
         }
 
+
+        //Intent del mapa
+        holder.view.mapView.setOnClickListener {
+            val gmmIntentUri =
+                Uri.parse("google.navigation:q=" + parking.posicion)
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+            mapIntent.flags = FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(mapIntent)
+        }
+
+        //Botón para expandir
         holder.view.setOnClickListener {
             // Ver si el item actual esta o no abierto
             val expanded: Boolean = parking.expanded
@@ -87,6 +103,37 @@ class ParkingListAdapter(
             notifyItemChanged(position)
         }
 
+        //Botón para hacer favorito un parking
+        holder.view.favoriteButton.setOnClickListener {
+            val codesMutable = getFavorites()
+
+            //Ya estaba en favorito, lo quitamos
+            if (codesMutable.contains(parking.codigo)) {
+                holder.view.favoriteButton.setImageResource(R.drawable.ic_favorite)
+                codesMutable.remove(parking.codigo)
+                if (currentTab == 1) {
+                    filterList.removeAt(position)
+                    originalList.remove(parking)
+                    notifyItemRemoved(position)
+                    notifyItemRangeChanged(position, filterList.size)
+                }
+
+                //No estaba en favoritos
+            } else {
+                holder.view.favoriteButton.setImageResource(R.drawable.ic_favorite_filled)
+                codesMutable.add(parking.codigo)
+
+            }
+            var codeString = codesMutable.joinToString()
+            codeString = codeString.replace("\\s".toRegex(), "")
+            with(sharedPref.edit()) {
+                putString("Favoritos", codeString)
+                commit()
+
+            }
+
+
+        }
     }
 
     /** Método para ocultar los campos que no corresponden si hay un fallo al obtener la lista
@@ -168,11 +215,15 @@ class ParkingListAdapter(
                     //Distancia
                     if (filters[1] != "-") {
                         //Si se apaga la ubicación antes de poder obtener una ubicación se comunica con un Toast
-                        if(currentLocation?.latitude==null){
-                            val info=Toast.makeText(context,context.getString(R.string.turn_on_location), Toast.LENGTH_LONG)
+                        if (currentLocation?.latitude == null) {
+                            val info = Toast.makeText(
+                                context,
+                                context.getString(R.string.turn_on_location),
+                                Toast.LENGTH_LONG
+                            )
                             info.show()
 
-                        }else {
+                        } else {
                             val max = filters[1].toDouble()
 
                             val latitude = currentLocation?.latitude
@@ -211,7 +262,7 @@ class ParkingListAdapter(
                     }
                     //Libre
                     if (filters[3].toBoolean()) {
-                        if (parking.libres!="") {
+                        if (parking.libres != "") {
                             if (parking.libres?.toInt() == 0) {
                                 isCorrect = false
                             }
@@ -246,19 +297,77 @@ class ParkingListAdapter(
     /**Método que controla la actualización de la lista del Adapter cuando se pulsa el botón actualizar para que se actualicen los elementos en pantalla
      *
      * @param newList ArrayList que contiene la lista actualizada **completa** de la que sólo cogeremos aquellos parking que se estén mostrando en este momento*/
-    fun updateFilterList(newList: ArrayList<Parking>){
-        var listaUpdated = ArrayList<Parking>()
-        if (filterList.size!=newList.size && filterList.isNotEmpty()){
-            for (parking in filterList){
-                val codigoFilter= parking.codigo
-                for(originalParking in newList){
-                    if(codigoFilter==originalParking.codigo){
+    fun updateFilterList(newList: ArrayList<Parking>) {
+        val listaUpdated = ArrayList<Parking>()
+        if (filterList.size != newList.size && filterList.isNotEmpty()) {
+            for (parking in filterList) {
+                val codigoFilter = parking.codigo
+                for (originalParking in newList) {
+                    if (codigoFilter == originalParking.codigo) {
                         listaUpdated.add(originalParking)
                     }
                 }
             }
-            filterList=listaUpdated
+            filterList = listaUpdated
         }
+    }
+
+    /**Método que actualiza la lista del Adapter con los favoritos para poder mostrarlos
+     *
+     * @param codes ArrayList con los códigos de los parking seleccionados como favoritos
+     * @param list Arraylist donde se devuelven los parking*/
+    fun displayFavorites(codes: ArrayList<String>, list: ArrayList<Parking>) {
+        val operationalList = ArrayList<Parking>(list)
+        list.clear()
+        for (parking in operationalList) {
+            if (codes.contains(parking.codigo)) {
+                list.add(parking)
+            }
+        }
+
+    }
+
+    /**Método que obtiene los códigos de los parking marcados como favoritos
+     *
+     * @return MutableList<String> con los String de los códigos*/
+    fun getFavorites(): MutableList<String> {
+        val favs: String? = sharedPref.getString("Favoritos", "")
+        val codesMutable: MutableList<String>
+        val codes: List<String> = favs!!.split(",")
+        codesMutable = if (favs.isEmpty()) {
+            ArrayList<String>().toMutableList()
+        } else {
+            codes.toMutableList()
+        }
+
+        return codesMutable
+    }
+
+    /**Set de la propiedad currentTab muestra la pestaña actual*/
+    fun setCurrentTab(current: Int) {
+        currentTab = current
+    }
+    /**Set de la lista con los parking que cumplen el filtro */
+    fun setfilterList(list: ArrayList<Parking>) {
+        filterList = list
+    }
+
+    /**Método que controla la actualización de la lista del Adapter cuando se pulsa el botón actualizar para que se actualicen los elementos en pantalla
+     *
+     * @param newList ArrayList que contiene la lista actualizada **de los parking favoritos** de la que sólo cogeremos aquellos parking que se estén mostrando en este momento */
+    fun updateFavoriteList(newList: ArrayList<Parking>) {
+        val listaUpdated = ArrayList<Parking>()
+
+        for (parking in filterList) {
+            val codigoFilter = parking.codigo
+            for (originalParking in newList) {
+                if (codigoFilter == originalParking.codigo) {
+                    listaUpdated.add(originalParking)
+                }
+            }
+        }
+        filterList = listaUpdated
+
     }
 
 
