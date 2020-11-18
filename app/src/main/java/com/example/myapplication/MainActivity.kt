@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -70,8 +72,22 @@ class MainActivity : AppCompatActivity() {
 
 
         //Actualizamos la posición
-        location = LocationServiceUpdate(this, viewAdapter, this)
-        location.updateLocation()
+        val sharedPref2=this.getSharedPreferences("Posicion", Context.MODE_PRIVATE)
+        val chosenLocation=sharedPref2.getString("Posicion","error")
+        //Si es error, tenemos que coger localización actual
+        if(chosenLocation.equals("error")){
+            location = LocationServiceUpdate(this, viewAdapter, this)
+            location.updateLocation()
+        }else{
+            //Si hay, siempre habrá dos valores
+            val codes= chosenLocation?.split(",")
+            val codesLatitude = codes?.get(0)?.replace(Regex("[^\\d.-]+"),"")
+            val codesLongitude = codes?.get(1)?.replace(Regex("[^\\d.-]+"),"")
+            val chooseLocation= Location(LocationManager.GPS_PROVIDER)
+            chooseLocation.latitude= codesLatitude?.toDouble()!!
+            chooseLocation.longitude=codesLongitude?.toDouble()!!
+            viewAdapter.setUpdateLocation(chooseLocation)
+        }
 
 
         //Obtenemos las preferencias donde esta almacenado el enlace del que obtener la lista de parkings
@@ -215,9 +231,15 @@ class MainActivity : AppCompatActivity() {
     /** Método que coge los datos de los filtros y los pasa al filter del adaptador */
     private fun filtrar() {
         val precio: EditText = findViewById(R.id.price_filter_value)
+        val precio2: EditText = findViewById(R.id.price_filter_value2)
         var precioFilter = precio.text.toString()
+        val precio2Filter = precio2.text.toString()
         if (precioFilter.isEmpty()) {
-            precioFilter = "-"
+            precioFilter = if (precio2Filter.isEmpty()) {
+                "-"
+            }else{
+                precio2Filter+"d"
+            }
         }
         val distancia: EditText = findViewById(R.id.distance_filter_value)
         var distanciaFilter = distancia.text.toString()
@@ -263,11 +285,11 @@ class MainActivity : AppCompatActivity() {
         //Mostrar
         if (mode == 0) {
             viewAdapter.notifyDataSetChanged()
-        //Actualizar
+            //Actualizar
         } else {
             sharedPref = this.getSharedPreferences("Enlace", Context.MODE_PRIVATE)
             val url = sharedPref.getString("Enlace", getString(R.string.no_link))
-            network.getFavoriteListUpdated(this,url,viewAdapter)
+            network.getFavoriteListUpdated(this, url, viewAdapter)
 
         }
     }
@@ -298,16 +320,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**Método que reiniciar los filtros.Se usa al cambiar de pestañas y resetear las listas*/
-    fun restartFilters(){
+    fun restartFilters() {
         val precio: EditText = findViewById(R.id.price_filter_value)
         precio.setText("")
         val distancia: EditText = findViewById(R.id.distance_filter_value)
         distancia.setText("")
         val checkOpen: CheckBox = findViewById(R.id.checkBox_open)
-        checkOpen.isChecked=false
+        checkOpen.isChecked = false
         val checkFree: CheckBox = findViewById(R.id.checkBox_free)
-        checkFree.isChecked=false
+        checkFree.isChecked = false
     }
+
 
 }
 

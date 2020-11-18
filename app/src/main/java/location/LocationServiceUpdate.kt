@@ -111,7 +111,7 @@ class LocationServiceUpdate (private val context: Context, val viewAdapter: Park
 
                         override fun onLocationResult(locationResult: LocationResult?) {
                             locationResult ?: return
-                            viewAdapter.updateLocation(locationResult.lastLocation)
+                            viewAdapter.setUpdateLocation(locationResult.lastLocation)
 
                         }
 

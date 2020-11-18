@@ -205,9 +205,18 @@ class ParkingListAdapter(
                     var isCorrect = true
                     //Precio
                     if (!filters?.get(0)?.equals("-")!! && !parking.precio.equals("-")) {
-                        val precio = filters[0]
+                        var precio = filters[0]
                         //Este método deja el precio sólo con los números
                         val precioParking = parking.precio?.replace(Regex("[^\\d+(.\\d+)*\$]"), "")
+                        if(precio.contains("d")){
+                            if(!parking.precio?.contains("d")!!){
+                                precio=precio.removeSuffix("d")
+                                precio=(precio.toDouble()/24).toString()
+                            }
+                            precio=precio.removeSuffix("d")
+                        }else if(!parking.precio?.contains("h")!!){
+                            precio=(precio.toDouble()*24).toString()
+                        }
                         if (precioParking?.toDouble()!! > precio.toDouble()) {
                             isCorrect = false
                         }
@@ -240,8 +249,7 @@ class ParkingListAdapter(
                                 longitudeParking,
                                 results
                             )
-                            val distance =
-                                results[0] / 1000 //Conversion a Km ya que el método lo devuelve en metros
+                            val distance = results[0]
                             if (distance > max) {
                                 isCorrect = false
                             }
@@ -289,7 +297,7 @@ class ParkingListAdapter(
      *
      * @param newLocation: Nueva localización a actualizar
      * */
-    fun updateLocation(newLocation: Location?) {
+    fun setUpdateLocation(newLocation: Location?) {
         this.currentLocation = newLocation
 
     }

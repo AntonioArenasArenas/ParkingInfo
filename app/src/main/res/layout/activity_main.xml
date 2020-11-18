@@ -78,7 +78,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_blue_light"
-            app:tabMode="fixed">
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabMaxWidth="0dp">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tabListParking"
@@ -161,6 +163,32 @@
                     android:text="@string/coin"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintStart_toEndOf="@id/price_filter_value"
+                    app:layout_constraintTop_toBottomOf="@id/price_filter" />
+
+                <EditText
+                    android:id="@+id/price_filter_value2"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginLeft="100dp"
+                    android:layout_marginStart="100dp"
+                    android:autofillHints="@string/price"
+                    android:background="@drawable/bottom_border"
+                    android:hint="@string/no_value"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="@color/colorPrimary"
+                    app:layout_constraintStart_toStartOf="@id/coin"
+                    app:layout_constraintTop_toBottomOf="@id/price_filter" />
+
+                <TextView
+                    android:id="@+id/coinD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/coind"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintStart_toEndOf="@id/price_filter_value2"
                     app:layout_constraintTop_toBottomOf="@id/price_filter" />
 
                 <TextView

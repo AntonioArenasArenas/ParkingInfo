@@ -27,20 +27,27 @@
     <string name="more">Desplegar más información</string>
     <string name="day">día</string>
     <string name="hour">hora</string>
-    <string name="coin" translatable="false">€</string>
+    <string name="coin">€/hora</string>
     <string name="no_value" translatable="false">-</string>
     <string name="distance">Distancia</string>
-    <string name="kilometres" translatable="false">km</string>
+    <string name="kilometres" translatable="false">m</string>
     <string name="open">Abierto</string>
     <string name="filter">Filtrar</string>
     <string name="permission_info">Para poder usar la aplicación con toda su funcionalidad, se necesita el permiso de localización, de no ser así, alguno de los filtros no estará disponible</string>
     <string name="grant_permission">Dar permiso</string>
     <string name="cancel">Cancelar</string>
     <string name="disable_filter">El filtro de distancia está deshabilitado</string>
-    <string name="turn_on_location">No se ha podido obtener la posición, si quiere usar el filtro de distancia, por favor encienda la ubicación</string>
+    <string name="turn_on_location">No se ha podido obtener la posición</string>
     <string name="filter_description">Botón para filtrar la lista con unos parámetros</string>
     <string name="parkings" translatable="false">Parkings</string>
     <string name="favorites">Favoritos</string>
     <string name="favorite_button">Botón para seleccionar como favorito un parking</string>
+    <string name="coind">€/día</string>
+    <string name="title_map_activity" translatable="false">MapsActivity</string>
+    <string name="location_mode">Método de localización:</string>
+    <string name="current_location">Posición actual</string>
+    <string name="choose_location">Escoger posición</string>
+    <string name="map_hint">Pulse el botón del mapa</string>
+    <string name="mark_position">Marque la localización deseada y pulse aquí</string>
 
 </resources>
