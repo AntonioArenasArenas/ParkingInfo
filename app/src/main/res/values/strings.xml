@@ -46,7 +46,7 @@
     <string name="title_map_activity" translatable="false">MapsActivity</string>
     <string name="location_mode">Método de localización:</string>
     <string name="current_location">Posición actual</string>
-    <string name="choose_location">Escoger posición</string>
+    <string name="choose_location">Escoger ubicación</string>
     <string name="map_hint">Pulse el botón del mapa</string>
     <string name="mark_position">Marque la localización deseada y pulse aquí</string>
 
