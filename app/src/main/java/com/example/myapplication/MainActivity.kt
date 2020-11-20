@@ -20,7 +20,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import location.LocationServiceUpdate
@@ -48,10 +47,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
-        //Comprobamos que tenemos el permiso de localizacion para los filtros de distancia de los parking
-        val permissions = PermissionsClass()
-        permissions.askPermission(this, this, supportFragmentManager)
-
+        //Comprobamos que no se haya dicho ya que no a los permisos
+        if(globalVar) {
+            //Comprobamos que tenemos el permiso de localizacion para los filtros de distancia de los parking
+            val permissions = PermissionsClass()
+            permissions.askPermission(this, this, supportFragmentManager)
+        }
 
         val lista = ArrayList<Parking>()
         // Se añade un item falso de consultar datos como espera
@@ -75,20 +76,7 @@ class MainActivity : AppCompatActivity() {
         val sharedPref2=this.getSharedPreferences("Posicion", Context.MODE_PRIVATE)
         val chosenLocation=sharedPref2.getString("Posicion","error")
         //Si es error, tenemos que coger localización actual
-        if(chosenLocation.equals("error")){
-            location = LocationServiceUpdate(this, viewAdapter, this)
-            location.updateLocation()
-        }else{
-            //Si hay, siempre habrá dos valores
-            val codes= chosenLocation?.split(",")
-            val codesLatitude = codes?.get(0)?.replace(Regex("[^\\d.-]+"),"")
-            val codesLongitude = codes?.get(1)?.replace(Regex("[^\\d.-]+"),"")
-            val chooseLocation= Location(LocationManager.GPS_PROVIDER)
-            chooseLocation.latitude= codesLatitude?.toDouble()!!
-            chooseLocation.longitude=codesLongitude?.toDouble()!!
-            viewAdapter.setUpdateLocation(chooseLocation)
-        }
-
+        actualizarUbicacion(chosenLocation)
 
         //Obtenemos las preferencias donde esta almacenado el enlace del que obtener la lista de parkings
         sharedPref = this.getSharedPreferences("Enlace", Context.MODE_PRIVATE)
@@ -188,7 +176,6 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int,
         permissions: Array<String>, grantResults: IntArray
     ) {
-        val distance: EditText = findViewById(R.id.distance_filter_value)
         //Se usa un when por si la aplicación escalara y hubiera más permisos que controlar
         when (requestCode) {
             0 -> {
@@ -196,27 +183,12 @@ class MainActivity : AppCompatActivity() {
                 if ((grantResults.isNotEmpty() &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ) {
-                    //Permiso concedido, filtro de distancia activado
-
-                    distance.isEnabled = true
-                    distance.setBackgroundResource(R.drawable.bottom_border)
-
-                } else {
-                    //Se explica que se han hecho modificaciones en la aplicación por no tener el permiso y se desactiva el filtro
-                    Snackbar.make(
-                        findViewById(R.id.drawer_layout), R.string.disable_filter,
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                    distance.isEnabled = false
-                    distance.setBackgroundResource(R.drawable.bottom_border_red)
-
+                    //Permiso concedido, actualizamos ubicación
+                    val sharedPref2=this.getSharedPreferences("Posicion", Context.MODE_PRIVATE)
+                    val chosenLocation=sharedPref2.getString("Posicion","error")
+                    //Si es error, tenemos que coger localización actual
+                    actualizarUbicacion(chosenLocation)
                 }
-                return
-            }
-            //Este codigo se usa para saber que venimos del Dialog
-            1 -> {
-                distance.isEnabled = false
-                distance.setBackgroundResource(R.drawable.bottom_border_red)
                 return
             }
         }
@@ -329,6 +301,22 @@ class MainActivity : AppCompatActivity() {
         checkOpen.isChecked = false
         val checkFree: CheckBox = findViewById(R.id.checkBox_free)
         checkFree.isChecked = false
+    }
+
+    fun actualizarUbicacion(chosenLocation: String?){
+        if(chosenLocation.equals("error")){
+            location = LocationServiceUpdate(this, viewAdapter, this)
+            location.updateLocation()
+        }else{
+            //Si hay, siempre habrá dos valores
+            val codes= chosenLocation?.split(",")
+            val codesLatitude = codes?.get(0)?.replace(Regex("[^\\d.-]+"),"")
+            val codesLongitude = codes?.get(1)?.replace(Regex("[^\\d.-]+"),"")
+            val chooseLocation= Location(LocationManager.GPS_PROVIDER)
+            chooseLocation.latitude= codesLatitude?.toDouble()!!
+            chooseLocation.longitude=codesLongitude?.toDouble()!!
+            viewAdapter.setUpdateLocation(chooseLocation)
+        }
     }
 
 

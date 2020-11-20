@@ -9,6 +9,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
 
@@ -16,6 +17,7 @@ internal class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var coordfinal: LatLng
+    private var lastMarker: Marker? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,11 +54,15 @@ internal class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
         mySnackbar.show()
+        lastMarker=null
 
 
         mMap.setOnMapClickListener { coord ->
 
-            mMap.addMarker(
+            if(lastMarker!=null){
+                lastMarker?.remove()
+            }
+            lastMarker= mMap.addMarker(
                 MarkerOptions()
                 .position(coord))
             coordfinal=coord

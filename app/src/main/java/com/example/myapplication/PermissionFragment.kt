@@ -28,18 +28,11 @@ class PermissionFragment : DialogFragment() {
                 .setNegativeButton(R.string.cancel
                 ) { _, _ ->
                     dismiss()
-                    requireActivity().onRequestPermissionsResult(1, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        intArrayOf())
+                    MainActivity.globalVar=false
                 }
             // Se crea el Dialog y se devuelve
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    //Controlamos si el usuario cancela el Dialog para notificar que ha cancelado
-    override fun onCancel(dialog: DialogInterface) {
-        super.onCancel(dialog)
-        requireActivity().onRequestPermissionsResult(1, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            intArrayOf())
-    }
 }
