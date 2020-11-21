@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import com.example.myapplication.MainActivity
 import com.example.myapplication.PermissionFragment
 
 /**Esta clase se usa para pedir permisos acerca de la ubicación. Si el usuario rechaza dar permiso, se genera un Dialog explicativo que usa PermissionFragment*/
