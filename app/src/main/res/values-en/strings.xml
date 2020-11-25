@@ -31,11 +31,11 @@
     <string name="filter_description">Button to filter the list with some parameters</string>
     <string name="favorites">Favorites</string>
     <string name="favorite_button">"Button to select a parking as a favorite "</string>
-    <string name="coin">€/hour</string>
     <string name="coind">€/day</string>
     <string name="location_mode">"Location method: "</string>
     <string name="current_location">Current location</string>
     <string name="choose_location">Choose location</string>
     <string name="map_hint">"Press the map button "</string>
     <string name="mark_position">Mark the desired location and press here</string>
+    <string name="location_option">"Travel destination "</string>
 </resources>

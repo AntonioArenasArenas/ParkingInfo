@@ -159,6 +159,19 @@ class MainActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
+        val spinner: Spinner = findViewById(R.id.price_type)
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.price_type,
+            R.layout.spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            spinner.adapter = adapter
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -167,9 +180,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
-        return true
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.location_options -> {
+                val intent = Intent(this, TravelDestinationActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -203,15 +226,17 @@ class MainActivity : AppCompatActivity() {
     /** Método que coge los datos de los filtros y los pasa al filter del adaptador */
     private fun filtrar() {
         val precio: EditText = findViewById(R.id.price_filter_value)
-        val precio2: EditText = findViewById(R.id.price_filter_value2)
+        val spinner : Spinner= findViewById(R.id.price_type)
+        val tipo: Int= spinner.selectedItemPosition
         var precioFilter = precio.text.toString()
-        val precio2Filter = precio2.text.toString()
         if (precioFilter.isEmpty()) {
-            precioFilter = if (precio2Filter.isEmpty()) {
-                "-"
-            }else{
-                precio2Filter+"d"
+            precioFilter = "-"
+
+        }else{
+            if(tipo==1){
+                precioFilter += "d"
             }
+
         }
         val distancia: EditText = findViewById(R.id.distance_filter_value)
         var distanciaFilter = distancia.text.toString()
@@ -243,7 +268,7 @@ class MainActivity : AppCompatActivity() {
      *
      * @param list lista de todos los parking mostrados actualmente. Devuelve los favoritos al finalizar
      * @param mode 0 si es para mostrar los favoritos, 1 si es para actualizar la lista tras darle al botón*/
-    fun showFavs(list: ArrayList<Parking>, mode: Int) {
+    private fun showFavs(list: ArrayList<Parking>, mode: Int) {
         sharedPref = this.getSharedPreferences("Favoritos", Context.MODE_PRIVATE)
         val favs = sharedPref.getString("Favoritos", "")
         val favsSplitted = favs!!.split(",")
@@ -303,7 +328,10 @@ class MainActivity : AppCompatActivity() {
         checkFree.isChecked = false
     }
 
-    fun actualizarUbicacion(chosenLocation: String?){
+    /**Método utilizado para actualizar la ubicación
+     *
+     * @param chosenLocation ubicación introducida a mano pasada a formato String. Si no existe, se le pasa la cadena "error"*/
+    private fun actualizarUbicacion(chosenLocation: String?){
         if(chosenLocation.equals("error")){
             location = LocationServiceUpdate(this, viewAdapter, this)
             location.updateLocation()

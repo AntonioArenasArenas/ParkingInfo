@@ -66,6 +66,7 @@ class ParkingListAdapter(
         if (parking.name.contains("Error")) {
             ocultarCamposError(holder)
         } else {
+            visibleCamposNoError(holder)
             holder.view.parkingFreeCount.text = parking.libres
             holder.view.parkingPlacesCount.text = parking.total
             holder.view.price_value.text = parking.precio
@@ -145,10 +146,20 @@ class ParkingListAdapter(
         holder.view.parkingPlacesCount.visibility = View.GONE
         holder.view.parkingFree.visibility = View.GONE
         holder.view.parkingPlaces.visibility = View.GONE
-        holder.view.price.visibility = View.GONE
-        holder.view.price_value.visibility = View.GONE
-        holder.view.schedule.visibility = View.GONE
-        holder.view.schedule_value.visibility = View.GONE
+        holder.view.favoriteButton.visibility=View.GONE
+
+    }
+
+    /** Método para visibilizar los campos cuando no hay fallo al visibilizar la lista
+     *
+     * @param holder ViewHolder sobre el que se ejecuta la acción */
+    private fun visibleCamposNoError(holder: MyViewHolder) {
+        holder.view.mapView.visibility = View.VISIBLE
+        holder.view.parkingFreeCount.visibility = View.VISIBLE
+        holder.view.parkingPlacesCount.visibility = View.VISIBLE
+        holder.view.parkingFree.visibility = View.VISIBLE
+        holder.view.parkingPlaces.visibility = View.VISIBLE
+        holder.view.favoriteButton.visibility=View.VISIBLE
 
     }
 
@@ -224,7 +235,7 @@ class ParkingListAdapter(
                     //Distancia
                     if (filters[1] != "-") {
                         //Si se apaga la ubicación antes de poder obtener una ubicación se comunica con un Toast
-                        if (currentLocation?.latitude == null) {
+                        if (currentLocation == null) {
                             val info = Toast.makeText(
                                 context,
                                 context.getString(R.string.turn_on_location),
@@ -262,7 +273,7 @@ class ParkingListAdapter(
                         val currentTime: Int = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
 
                         if (parking.hora_inicio != "") {
-                            if (parking.hora_inicio?.toInt()!! > currentTime || currentTime > parking.hora_fin?.toInt()!!) {
+                            if (parking.hora_inicio?.toInt()!! >= currentTime || currentTime > parking.hora_fin?.toInt()!!) {
                                 isCorrect = false
 
                             }
