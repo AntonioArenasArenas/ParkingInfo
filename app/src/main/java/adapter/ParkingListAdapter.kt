@@ -14,7 +14,7 @@ import android.widget.Filterable
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import kotlinx.android.synthetic.main.parking.view.*
+import com.example.myapplication.databinding.ParkingBinding
 import model.Parking
 import java.util.*
 import kotlin.collections.ArrayList
@@ -38,7 +38,7 @@ class ParkingListAdapter(
 
 
     // Conectar cada item de la lista con su vista correspondiente
-    class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view)
+    class MyViewHolder(val parkingView: ParkingBinding) : RecyclerView.ViewHolder(parkingView.root)
 
     // Creacion de nuevas vistas
     override fun onCreateViewHolder(
@@ -46,8 +46,7 @@ class ParkingListAdapter(
         viewType: Int
     ): MyViewHolder {
 
-        val parkingView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.parking, parent, false)
+        val parkingView= ParkingBinding.inflate(LayoutInflater.from(parent.context),parent,false)
 
 
         return MyViewHolder(parkingView)
@@ -58,7 +57,7 @@ class ParkingListAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         sharedPref = context.getSharedPreferences("Favoritos", Context.MODE_PRIVATE)
         val parking = filterList[position]
-        holder.view.parkingName.text = parking.name
+        holder.parkingView.parkingName.text=parking.name
         //Se comprueba si esta o no expandido el parking
         val isExpanded = parking.expanded
         ocultarCamposExpandidos(isExpanded, holder)
@@ -67,25 +66,25 @@ class ParkingListAdapter(
             ocultarCamposError(holder)
         } else {
             visibleCamposNoError(holder)
-            holder.view.parkingFreeCount.text = parking.libres
-            holder.view.parkingPlacesCount.text = parking.total
-            holder.view.price_value.text = parking.precio
-            holder.view.schedule_value.text = context.getString(
+            holder.parkingView.parkingFreeCount.text = parking.libres
+            holder.parkingView.parkingPlacesCount.text = parking.total
+            holder.parkingView.priceValue.text = parking.precio
+            holder.parkingView.scheduleValue.text = context.getString(
                 R.string.schedule_value,
                 parking.hora_inicio,
                 parking.hora_fin
             )
             val codesMutable = getFavorites()
             if (codesMutable.contains(parking.codigo)) {
-                holder.view.favoriteButton.setImageResource(R.drawable.ic_favorite_filled)
+                holder.parkingView.favoriteButton.setImageResource(R.drawable.ic_favorite_filled)
             } else {
-                holder.view.favoriteButton.setImageResource(R.drawable.ic_favorite)
+                holder.parkingView.favoriteButton.setImageResource(R.drawable.ic_favorite)
             }
         }
 
 
         //Intent del mapa
-        holder.view.mapView.setOnClickListener {
+        holder.parkingView.mapView.setOnClickListener {
             val gmmIntentUri =
                 Uri.parse("google.navigation:q=" + parking.posicion)
             val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -95,7 +94,7 @@ class ParkingListAdapter(
         }
 
         //Botón para expandir
-        holder.view.setOnClickListener {
+        holder.parkingView.root.setOnClickListener {
             // Ver si el item actual esta o no abierto
             val expanded: Boolean = parking.expanded
             // Cambiar al hacer clik el estado del item
@@ -105,12 +104,12 @@ class ParkingListAdapter(
         }
 
         //Botón para hacer favorito un parking
-        holder.view.favoriteButton.setOnClickListener {
+        holder.parkingView.favoriteButton.setOnClickListener {
             val codesMutable = getFavorites()
 
             //Ya estaba en favorito, lo quitamos
             if (codesMutable.contains(parking.codigo)) {
-                holder.view.favoriteButton.setImageResource(R.drawable.ic_favorite)
+                holder.parkingView.favoriteButton.setImageResource(R.drawable.ic_favorite)
                 codesMutable.remove(parking.codigo)
                 if (currentTab == 1) {
                     filterList.removeAt(position)
@@ -121,7 +120,7 @@ class ParkingListAdapter(
 
                 //No estaba en favoritos
             } else {
-                holder.view.favoriteButton.setImageResource(R.drawable.ic_favorite_filled)
+                holder.parkingView.favoriteButton.setImageResource(R.drawable.ic_favorite_filled)
                 codesMutable.add(parking.codigo)
 
             }
@@ -129,7 +128,7 @@ class ParkingListAdapter(
             codeString = codeString.replace("\\s".toRegex(), "")
             with(sharedPref.edit()) {
                 putString("Favoritos", codeString)
-                commit()
+                apply()
 
             }
 
@@ -141,12 +140,12 @@ class ParkingListAdapter(
      *
      * @param holder ViewHolder sobre el que se ejecuta la acción */
     private fun ocultarCamposError(holder: MyViewHolder) {
-        holder.view.mapView.visibility = View.GONE
-        holder.view.parkingFreeCount.visibility = View.GONE
-        holder.view.parkingPlacesCount.visibility = View.GONE
-        holder.view.parkingFree.visibility = View.GONE
-        holder.view.parkingPlaces.visibility = View.GONE
-        holder.view.favoriteButton.visibility=View.GONE
+        holder.parkingView.mapView.visibility = View.GONE
+        holder.parkingView.parkingFreeCount.visibility = View.GONE
+        holder.parkingView.parkingPlacesCount.visibility = View.GONE
+        holder.parkingView.parkingFree.visibility = View.GONE
+        holder.parkingView.parkingPlaces.visibility = View.GONE
+        holder.parkingView.favoriteButton.visibility=View.GONE
 
     }
 
@@ -154,12 +153,12 @@ class ParkingListAdapter(
      *
      * @param holder ViewHolder sobre el que se ejecuta la acción */
     private fun visibleCamposNoError(holder: MyViewHolder) {
-        holder.view.mapView.visibility = View.VISIBLE
-        holder.view.parkingFreeCount.visibility = View.VISIBLE
-        holder.view.parkingPlacesCount.visibility = View.VISIBLE
-        holder.view.parkingFree.visibility = View.VISIBLE
-        holder.view.parkingPlaces.visibility = View.VISIBLE
-        holder.view.favoriteButton.visibility=View.VISIBLE
+        holder.parkingView.mapView.visibility = View.VISIBLE
+        holder.parkingView.parkingFreeCount.visibility = View.VISIBLE
+        holder.parkingView.parkingPlacesCount.visibility = View.VISIBLE
+        holder.parkingView.parkingFree.visibility = View.VISIBLE
+        holder.parkingView.parkingPlaces.visibility = View.VISIBLE
+        holder.parkingView.favoriteButton.visibility=View.VISIBLE
 
     }
 
@@ -170,17 +169,17 @@ class ParkingListAdapter(
     private fun ocultarCamposExpandidos(expandido: Boolean, holder: MyViewHolder) {
 
         if (expandido) {
-            holder.view.price.visibility = View.VISIBLE
-            holder.view.price_value.visibility = View.VISIBLE
-            holder.view.schedule.visibility = View.VISIBLE
-            holder.view.schedule_value.visibility = View.VISIBLE
-            holder.view.morelessarrow.setImageResource(R.drawable.ic_minus)
+            holder.parkingView.price.visibility = View.VISIBLE
+            holder.parkingView.priceValue.visibility = View.VISIBLE
+            holder.parkingView.schedule.visibility = View.VISIBLE
+            holder.parkingView.scheduleValue.visibility = View.VISIBLE
+            holder.parkingView.morelessarrow.setImageResource(R.drawable.ic_minus)
 
         } else {
-            holder.view.price.visibility = View.GONE
-            holder.view.price_value.visibility = View.GONE
-            holder.view.schedule.visibility = View.GONE
-            holder.view.schedule_value.visibility = View.GONE
+            holder.parkingView.price.visibility = View.GONE
+            holder.parkingView.priceValue.visibility = View.GONE
+            holder.parkingView.schedule.visibility = View.GONE
+            holder.parkingView.scheduleValue.visibility = View.GONE
 
         }
     }

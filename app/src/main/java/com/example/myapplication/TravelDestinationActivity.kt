@@ -9,34 +9,40 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.TextView
+import com.example.myapplication.databinding.ActivityTravelDestinationBinding
 import com.google.android.gms.maps.model.LatLng
 
 class TravelDestinationActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityTravelDestinationBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_travel_destination)
+        binding= ActivityTravelDestinationBinding.inflate(layoutInflater)
+        val view= binding.root
+        setContentView(view)
 
         val sharedPref2 =this.getSharedPreferences("Posicion", Context.MODE_PRIVATE)
         val posicionMarcada: String?=sharedPref2.getString("Posicion", "error")
-        val posicionMapa: TextView =findViewById(R.id.position_selected)
-        val mapButton: ImageButton = findViewById(R.id.select_position)
+        val posicionMapa: TextView =binding.positionSelected
+        val mapButton: ImageButton = binding.selectPosition
 
         //Caso en el que no hay nada guardado anterior
         if(posicionMarcada.equals("error")){
-            val opcionActual: RadioButton =findViewById(R.id.current_position_option)
+            val opcionActual: RadioButton =binding.currentPositionOption
             opcionActual.isChecked=true
             //Ocultamos el textview y el boton de la opcion de escoger posicion
             posicionMapa.visibility=View.GONE
             mapButton.visibility=View.GONE
             //Caso en el que hay algo anteriormente guardado
         }else{
-            val opcionActual: RadioButton =findViewById(R.id.select_position_option)
+            val opcionActual: RadioButton =binding.selectPositionOption
             opcionActual.isChecked=true
             posicionMapa.visibility=View.VISIBLE
             mapButton.visibility=View.VISIBLE
             posicionMapa.text= posicionMarcada
         }
-        setSupportActionBar(findViewById(R.id.my_toolbar))
+        setSupportActionBar(binding.myToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         mapButton.setOnClickListener{
@@ -51,8 +57,8 @@ class TravelDestinationActivity : AppCompatActivity() {
         if (view is RadioButton) {
             // Is the button now checked?
             val checked = view.isChecked
-            val posicionMapa: TextView =findViewById(R.id.position_selected)
-            val mapButton: ImageButton = findViewById(R.id.select_position)
+            val posicionMapa: TextView =binding.positionSelected
+            val mapButton: ImageButton = binding.selectPosition
             // Check which radio button was clicked
             when (view.getId()) {
                 R.id.current_position_option ->
@@ -79,7 +85,7 @@ class TravelDestinationActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode== Activity.RESULT_OK && requestCode==1){
-            val posicionMapa: TextView =findViewById(R.id.position_selected)
+            val posicionMapa: TextView =binding.positionSelected
             if(data!=null){
                 val coord= data.getParcelableExtra<LatLng>("coord")
                 if (coord != null) {

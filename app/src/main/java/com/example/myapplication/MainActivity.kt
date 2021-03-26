@@ -12,7 +12,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -20,13 +19,13 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import location.LocationServiceUpdate
 import model.Parking
 import network.UpdateParking
 import permissions.PermissionsClass
-
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -35,17 +34,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var network: UpdateParking
     private lateinit var location: LocationServiceUpdate
     private lateinit var sharedPref: SharedPreferences
+    private lateinit var binding: ActivityMainBinding
+
 
     //Variable estática que controla si se debe pedir más veces el permiso de los servicios de localización de Google
     companion object {
         var globalVar = true
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.my_toolbar))
+        //Usamos ViewBinding para relacionar las vistas, es mas seguro que DataBinding y findViewById y DataBinding solo es mejor si se usan expresiones
+        //o vinculacion de datos bidireccionales
+        binding= ActivityMainBinding.inflate(layoutInflater)
+        val view= binding.root
+        setContentView(view)
+        setSupportActionBar(binding.myToolbar)
 
         //Comprobamos que no se haya dicho ya que no a los permisos
         if(globalVar) {
@@ -82,13 +86,14 @@ class MainActivity : AppCompatActivity() {
         sharedPref = this.getSharedPreferences("Enlace", Context.MODE_PRIVATE)
         val url: String? = sharedPref.getString("Enlace", getString(R.string.no_link))
 
-        viewManager = LinearLayoutManager(this)
+
         network = UpdateParking()
         network.actualizar(url, lista, this, viewAdapter)
 
+        viewManager = LinearLayoutManager(this)
 
         //Se gestiona la lista con el adaptador
-        recyclerView = findViewById<RecyclerView>(R.id.listaParking).apply {
+        recyclerView = binding.listaParking.apply {
             // si el tamaño va a ser fijo y solo depende del numero de elementos poner a true para mejorar rendimiento
             setHasFixedSize(true)
 
@@ -99,8 +104,8 @@ class MainActivity : AppCompatActivity() {
             adapter = viewAdapter
 
         }
-        val tabLayout = findViewById<View>(R.id.tabLayout) as TabLayout
-        val refresh: ImageButton = findViewById(R.id.refresh)
+        val tabLayout = binding.tabLayout
+        val refresh: ImageButton = binding.refresh
         //Se coge de nuevo aquí el enlace en caso de que la navegación sea hacia atrás y no hacia arriba
         refresh.setOnClickListener {
             if (tabLayout.selectedTabPosition == 1) {
@@ -117,17 +122,17 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        val navDrawer: DrawerLayout = findViewById(R.id.drawer_layout)
+        val navDrawer: DrawerLayout = binding.root
 
 
         //Botón para filtrar
-        val filter: Button = findViewById(R.id.submit_button)
+        val filter: Button = binding.submitButton
         filter.setOnClickListener {
             filtrar()
             navDrawer.closeDrawer(GravityCompat.START)
         }
 
-        val openFilter: ImageButton = findViewById(R.id.filter)
+        val openFilter: ImageButton = binding.filter
         openFilter.setOnClickListener {
             if (navDrawer.isDrawerOpen(GravityCompat.START)) {
                 navDrawer.closeDrawer(GravityCompat.START)
@@ -159,7 +164,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
-        val spinner: Spinner = findViewById(R.id.price_type)
+        val spinner: Spinner = binding.priceType
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
             this,
@@ -225,8 +230,8 @@ class MainActivity : AppCompatActivity() {
 
     /** Método que coge los datos de los filtros y los pasa al filter del adaptador */
     private fun filtrar() {
-        val precio: EditText = findViewById(R.id.price_filter_value)
-        val spinner : Spinner= findViewById(R.id.price_type)
+        val precio: EditText = binding.priceFilterValue
+        val spinner : Spinner= binding.priceType
         val tipo: Int= spinner.selectedItemPosition
         var precioFilter = precio.text.toString()
         if (precioFilter.isEmpty()) {
@@ -238,19 +243,19 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        val distancia: EditText = findViewById(R.id.distance_filter_value)
+        val distancia: EditText = binding.distanceFilterValue
         var distanciaFilter = distancia.text.toString()
         if (distanciaFilter.isEmpty()) {
             distanciaFilter = "-"
         }
-        val checkOpen: CheckBox = findViewById(R.id.checkBox_open)
-        val checkFree: CheckBox = findViewById(R.id.checkBox_free)
+        val checkOpen: CheckBox = binding.checkBoxOpen
+        val checkFree: CheckBox = binding.checkBoxFree
         viewAdapter.filter.filter(precioFilter + "," + distanciaFilter + "," + checkOpen.isChecked + "," + checkFree.isChecked)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val distance: EditText = findViewById(R.id.distance_filter_value)
+        val distance: EditText = binding.distanceFilterValue
         if (resultCode == Activity.RESULT_OK && requestCode == 2) {
             distance.isEnabled = true
             distance.setBackgroundResource(R.drawable.bottom_border)
@@ -272,8 +277,7 @@ class MainActivity : AppCompatActivity() {
         sharedPref = this.getSharedPreferences("Favoritos", Context.MODE_PRIVATE)
         val favs = sharedPref.getString("Favoritos", "")
         val favsSplitted = favs!!.split(",")
-        val arraySplitted: ArrayList<String>
-        arraySplitted = if (favs.isEmpty()) {
+        val arraySplitted: ArrayList<String> = if (favs.isEmpty()) {
             ArrayList()
         } else {
             ArrayList(favsSplitted)
@@ -318,13 +322,13 @@ class MainActivity : AppCompatActivity() {
 
     /**Método que reiniciar los filtros.Se usa al cambiar de pestañas y resetear las listas*/
     fun restartFilters() {
-        val precio: EditText = findViewById(R.id.price_filter_value)
+        val precio: EditText = binding.priceFilterValue
         precio.setText("")
-        val distancia: EditText = findViewById(R.id.distance_filter_value)
+        val distancia: EditText = binding.distanceFilterValue
         distancia.setText("")
-        val checkOpen: CheckBox = findViewById(R.id.checkBox_open)
+        val checkOpen: CheckBox = binding.checkBoxOpen
         checkOpen.isChecked = false
-        val checkFree: CheckBox = findViewById(R.id.checkBox_free)
+        val checkFree: CheckBox = binding.checkBoxFree
         checkFree.isChecked = false
     }
 

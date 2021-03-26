@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--En ViewBinding el elemento raiz no necesita id, se recupera con root-->
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -82,8 +82,10 @@
             app:tabGravity="fill"
             app:tabMaxWidth="0dp">
 
+            <!--Existe un bug con los TabItems que no permite referenciarlos con id en ViewBinding. Si se necesitara hacer referencia a ellos
+            se debe hacer de manera manual en el activity-->
+
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabListParking"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/parkings"
@@ -91,7 +93,6 @@
                 />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabListFav"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/favorites"

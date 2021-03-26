@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -17,11 +18,14 @@ internal class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var coordfinal: LatLng
+    private lateinit var binding: ActivityMapsBinding
     private var lastMarker: Marker? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
+        binding= ActivityMapsBinding.inflate(layoutInflater)
+        val view= binding.root
+        setContentView(view)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -41,7 +45,7 @@ internal class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
         coordfinal= LatLng(0.0, 0.0)
         val mySnackbar=Snackbar.make(
-            findViewById(R.id.map), R.string.mark_position,
+            binding.map, R.string.mark_position,
             Snackbar.LENGTH_INDEFINITE
         )
         val sbView: View = mySnackbar.view
