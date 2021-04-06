@@ -8,4 +8,4 @@ permite:
 * Pantalla de configuración para introducir el enlace de donde coger los datos de aparcamientos.
 * Filtro de aparcamientos en función de distintos valores.
 
-Se puede acceder al Manual de usuario aquí.
+Se puede acceder al Manual de usuario [descargando el siguiente archivo de Word](https://github.com/AntonioArenasArenas/ParkingInfo/blob/main/Manual%20de%20usuario.docx).
